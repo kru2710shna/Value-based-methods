@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+from p1_navigation.model import QNetwork
 # ---------------- Hyperparams ----------------
 BUFFER_SIZE = int(1e5)   # replay buffer size
 BATCH_SIZE = 64          # minibatch size
@@ -18,27 +19,6 @@ UPDATE_EVERY = 4         # how often to learn
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-# ---------------- Model ----------------
-class QNetwork(nn.Module):
-    """Simple MLP mapping state -> action values."""
-    def __init__(self, state_size, action_size, seed, fc1_units=64, fc2_units=64):
-        super(QNetwork, self).__init__()
-        self.seed = torch.manual_seed(seed)
-        self.fc1  = nn.Linear(state_size, fc1_units)
-        self.fc2  = nn.Linear(fc1_units, fc2_units)
-        self.fc3  = nn.Linear(fc2_units, action_size)
-
-        # (optional) small init
-        nn.init.kaiming_uniform_(self.fc1.weight, nonlinearity="relu")
-        nn.init.kaiming_uniform_(self.fc2.weight, nonlinearity="relu")
-        nn.init.xavier_uniform_(self.fc3.weight)
-
-    def forward(self, state):
-        x = F.relu(self.fc1(state))
-        x = F.relu(self.fc2(x))
-        return self.fc3(x)  # raw Q-values per action
-
-
 # ---------------- Agent ----------------
 class Agent:
     """Interacts with and learns from the environment."""
@@ -46,7 +26,7 @@ class Agent:
         self.state_size  = state_size
         self.action_size = action_size
         self.seed = random.seed(seed)
-
+                                                                                                                                                    
         # Q-networks
         self.qnetwork_local  = QNetwork(state_size, action_size, seed).to(device)
         self.qnetwork_target = QNetwork(state_size, action_size, seed).to(device)

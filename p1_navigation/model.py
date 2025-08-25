@@ -23,15 +23,16 @@ class QNetwork(nn.Module):
         self.fc3 = nn.Linear(fc2_units, action_size)
 
         # (optional) initialize weights
-        nn.init.kaiming_uniform_(self.fc1.weight, nonlinearity="relu")
-        nn.init.kaiming_uniform_(self.fc2.weight, nonlinearity="relu")
-        nn.init.xavier_uniform_(self.fc3.weight)
-        nn.init.zeros_(self.fc1.bias)
-        nn.init.zeros_(self.fc2.bias)
-        nn.init.zeros_(self.fc3.bias)
+        # nn.init.kaiming_uniform_(self.fc1.weight, nonlinearity="relu")
+        # nn.init.kaiming_uniform_(self.fc2.weight, nonlinearity="relu")
+        # nn.init.xavier_uniform_(self.fc3.weight)
+        # nn.init.zeros_(self.fc1.bias)
+        # nn.init.zeros_(self.fc2.bias)
+        # nn.init.zeros_(self.fc3.bias)
 
     def forward(self, state):
         """Forward pass producing Q-values for each action."""
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
         return self.fc3(x)   # shape: [batch_size, action_size]
+
